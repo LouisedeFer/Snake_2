@@ -110,7 +110,6 @@ class Game:
             text_scores = self._font_1.render(score.name.ljust(Score.MAX_LENGHT) +f" {score.score : >8}", True, pygame.Color("red"))
             self._screen.blit(text_scores, (x,y))
             y+=32
-
         pygame.display.update()
 
 
@@ -133,32 +132,28 @@ class Game:
                 case pygame.K_RIGHT:
                     self._snake.dir = Dir.RIGHT
 
-    def _process_inputname(self, event: pygame.event.Event, score_player : int) -> None :
+    def _process_inputname(self, event: pygame.event.Event) -> None :
         """The player put his/her name in the ranking list of highscores."""
-        name_player=""
-        flag=True
-
-        while flag is True :
-
-            self._draw_scores() # Print the existing scores
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:  # Validate the name
-                    self._scores.add_score(Score(name=name_player, score=score_player))
-                    self._draw_scores()  # Afficher la liste des scores à jour
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:  # Validate the name
+                self._scores.liste_scores.append(Score(name=self._name, score=self._new_high_score))
+                print(self._scores.liste_scores[-1])
+                self._scores.liste_scores.sort(reverse=True)
+                self._scores.liste_scores.pop()
+                self._state = State.SCORES
+            elif event.key == pygame.K_BACKSPACE:  # Correct a mistake
+                self._name = self._name[:-1]
+                self._scores.liste_scores.pop()
+                self._scores.liste_scores.append(Score(name=self._name, score=self._new_high_score))
+                print(self._scores.liste_scores[-1])
+            elif 65 <= event.key <= 122 and len(self._name) < MAX_LENGHT:  # Add an unicode caract
+                self._name += event.unicode
+                self._scores.liste_scores.pop()
+                self._scores.liste_scores.append(Score(name=self._name, score=self._new_high_score))
+                print(self._scores.liste_scores[-1])
+                if len(self._name)>=MAX_LENGHT :
+                    self._scores.liste_scores.sort(reverse=True)
                     self._state = State.SCORES
-                    flag = False
-                elif event.key == pygame.K_BACKSPACE:  # Correct a mistake
-                    name_player = name_player[:-1]
-                    self._scores.add_score(Score(name=name_player, score=score_player))
-                    self._draw_scores()  # Afficher la liste des scores à jour
-                elif 65 <= event.key <= 122 and len(name_player) < MAX_LENGHT:  # Add an unicode caract
-                    name_player += event.unicode
-                    self._scores.add_score(Score(name=name_player, score=score_player))
-                    self._draw_scores()  # Afficher la liste des scores à jour
-                    if len(name_player)>=MAX_LENGHT :
-                        self._state = State.SCORES
-                        flag=False
 
 
     def _process_events(self) -> None:
@@ -172,7 +167,8 @@ class Game:
                 case State.PLAY :
                     self._process_play_event(event)
                 case State.INPUT_NAME :
-                    self._process_inputname(event, self._snake.score)
+                    self._process_inputname(event)
+                    self._draw_scores()
             # Closing window (Mouse click on cross icon or OS keyboard shortcut)
             if event.type == pygame.QUIT:
                 self._state = State.QUIT
@@ -226,12 +222,15 @@ class Game:
                         score=self._snake.score
                         self._reset_snake()
                         if self._scores.is_highscore(score) is True :
-                            self._scores.add_score(Score(score, ""))
+                            self._new_high_score=score # in order to have access to it Input_Name state
+                            self._name=""
                             self._state= State.INPUT_NAME
                         else :
                             self._state=State.SCORES
                 case State.SCORES :
                     self._draw_scores()
+                case State.INPUT_NAME :
+                    self._draw_scores()g
 
             # Display
             pygame.display.update()
