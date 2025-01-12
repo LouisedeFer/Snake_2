@@ -2,7 +2,7 @@
 
 # Third party
 import importlib.resources
-import time
+import sys
 
 import pygame
 
@@ -20,6 +20,8 @@ from .state import State
 
 # Constants
 SK_START_LENGTH = 3
+MAX_LENGHT=8
+MAX_SCORES=5
 
 class Game:
     """The main class of the game."""
@@ -45,7 +47,7 @@ class Game:
 
     def _reset_snake(self) -> None:
         """Reset the snake."""
-        if self._snake is not None : 
+        if self._snake is not None :
             self._board.detach_obs(self._snake)
             self._board.remove_object(self._snake)
         self._snake= Snake.create_random(
@@ -84,7 +86,7 @@ class Game:
         self._reset_snake()
 
         #Scores
-        self._scores = Scores.default(5)
+        self._scores = Scores.default(MAX_SCORES)
 
         # Create fruit
         Fruit.color = self._fruit_color
@@ -95,26 +97,32 @@ class Game:
             self._font_1=pygame.font.Font(f, 32)
             self._font_2=pygame.font.Font(f, 64)
 
-    def _drawgameover(self):
-        text_surface = self._font_2.render("GAME OVER", True, pygame.Color("red"))  # noqa: FBT003
+    def _drawgameover(self) -> None:
+        """Draw the gameover's sentence."""
+        text_gameover = self._font_2.render("GAME OVER", True, pygame.Color("red"))
         x, y = 80, 160 # Define the position where to write text.
-        self._screen.blit(text_surface, (x, y))
+        self._screen.blit(text_gameover, (x, y))
 
     def _draw_scores(self) -> None :
+        """Put a highscore's line."""
+        x, y = 80, 10 # Define the position where to write text.
         for score in self._scores :
-            text_scores = self._font_1.render(score.name.ljust(Score.MAX_LENGHT) +f" {score.score : >8}", True, pygame.Color("red"))  # noqa: FBT003
-            x, y = 80, 10 # Define the position where to write text.
+            text_scores = self._font_1.render(score.name.ljust(Score.MAX_LENGHT) +f" {score.score : >8}", True, pygame.Color("red"))
             self._screen.blit(text_scores, (x,y))
-            y+=40
+            y+=32
+
+        pygame.display.update()
 
 
-    def _process_scores_event(self, event) :
+    def _process_scores_event(self, event : pygame.event.Event) -> None :
+        """Switch to the state Play if needed."""
         if event.type==pygame.KEYDOWN and event.key==pygame.K_SPACE:
             self._state=State.PLAY
 
 
-    def _process_play_event(self, event) -> None:
-        if event.type==pygame.KEYDOWN : 
+    def _process_play_event(self, event : pygame.event.Event) -> None:
+        """Change the direction of the snake if needed."""
+        if event.type==pygame.KEYDOWN :
             match event.key:
                 case pygame.K_UP:
                     self._snake.dir = Dir.UP
@@ -125,7 +133,32 @@ class Game:
                 case pygame.K_RIGHT:
                     self._snake.dir = Dir.RIGHT
 
+    def _process_inputname(self, event: pygame.event.Event, score_player : int) -> None :
+        """The player put his/her name in the ranking list of highscores."""
+        name_player=""
+        flag=True
 
+        while flag is True :
+
+            self._draw_scores() # Print the existing scores
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:  # Validate the name
+                    self._scores.add_score(Score(name=name_player, score=score_player))
+                    self._draw_scores()  # Afficher la liste des scores à jour
+                    self._state = State.SCORES
+                    flag = False
+                elif event.key == pygame.K_BACKSPACE:  # Correct a mistake
+                    name_player = name_player[:-1]
+                    self._scores.add_score(Score(name=name_player, score=score_player))
+                    self._draw_scores()  # Afficher la liste des scores à jour
+                elif 65 <= event.key <= 122 and len(name_player) < MAX_LENGHT:  # Add an unicode caract
+                    name_player += event.unicode
+                    self._scores.add_score(Score(name=name_player, score=score_player))
+                    self._draw_scores()  # Afficher la liste des scores à jour
+                    if len(name_player)>=MAX_LENGHT :
+                        self._state = State.SCORES
+                        flag=False
 
 
     def _process_events(self) -> None:
@@ -138,6 +171,8 @@ class Game:
                     self._process_scores_event(event)
                 case State.PLAY :
                     self._process_play_event(event)
+                case State.INPUT_NAME :
+                    self._process_inputname(event, self._snake.score)
             # Closing window (Mouse click on cross icon or OS keyboard shortcut)
             if event.type == pygame.QUIT:
                 self._state = State.QUIT
@@ -174,6 +209,7 @@ class Game:
             try :
                 if self._state==State.PLAY :
                     self._snake.move()
+
             except GameOver:
                 self._state=State.GAMEOVER
                 countdown=self._fps
@@ -189,9 +225,10 @@ class Game:
                     if countdown==0 :
                         score=self._snake.score
                         self._reset_snake()
-                        if self._scores.is_highscore(score) : 
+                        if self._scores.is_highscore(score) is True :
+                            self._scores.add_score(Score(score, ""))
                             self._state= State.INPUT_NAME
-                        else : 
+                        else :
                             self._state=State.SCORES
                 case State.SCORES :
                     self._draw_scores()
