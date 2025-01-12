@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class State(Enum) :
     """Define the states of the game."""
 
