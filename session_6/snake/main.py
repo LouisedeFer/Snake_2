@@ -2,6 +2,7 @@
 
 # Standard
 import sys
+from pathlib import Path
 
 # First party
 from .cmd_line import read_args
@@ -21,7 +22,7 @@ def main() -> None: # noqa: D103
              fruit_color = args.fruit_color,
              snake_head_color = args.snake_head_color,
              snake_body_color = args.snake_body_color,
-             gameover_on_exit = args.gameover_on_exit,
+             gameover_on_exit = args.gameover_on_exit, scores_file=Path(args.scores_file),
              ).start()
 
     except SnakeError as e:

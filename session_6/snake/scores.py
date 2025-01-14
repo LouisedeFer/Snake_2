@@ -1,6 +1,9 @@
 import typing
 
+import yaml
+
 from .score import Score
+from pathlib import Path
 
 
 class Scores :
@@ -9,45 +12,56 @@ class Scores :
     def __init__(self, max_scores : int, scores : list[Score]) -> None :
         """Define the scores."""
         self._max_scores=max_scores
-        scores.sort(reverse=True)
-        self._scores=scores[:max_scores]
- 
+        self._scores=sorted(scores, reverse = True)[:max_scores]
 
     @classmethod
     def default(cls, max_scores : int ) -> "Scores" :
         """Classmethod."""
-        return cls(max_scores, [Score (score=10, name="Joe"), Score(score=8, name="Jack"), Score(score=1,name="Averell"), Score(score=6, name="William")])
+        return cls(max_scores, [Score (score=-1, name="Joe"), Score(score=8, name="Jack"), Score(score=0,name="Averell"), Score(score=6, name="William")])
+
+    @classmethod
+    def load(cls,scores_file : Path, max_scores : int) -> "Scores" :
+        """Load the file."""
+        with scores_file.open("r") as fd : #(file descriptor)
+            g=yaml.safe_load(fd )
+            x=[Score(score=elt["score"], name=elt["name"])for elt in g]
+        return cls(max_scores, x)
+
+
+
+
 
     def __iter__(self) -> typing.Iterator[Score]:
         """Iterate on the list of scores."""
         return iter(self._scores)
 
 
-    @property
-    def liste_scores(self) -> list[Score] :
-        """Return the list of the Scores."""
-        return self._scores
-
-    def add_score(self, score: Score) -> None:
-        """Add a score and sort the list."""
-        self.liste_scores.append(score)
-        self.liste_scores.sort(reverse=True)
-        if len(self.liste_scores) > self._max_scores:
-            self.liste_scores.pop()  # Garder uniquement les meilleurs scores
-
-
     def is_highscore(self, score_player : int) -> bool :
         """Define the case highscore."""
-        flag=False # not a highscore
-        if len(self.liste_scores)<self._max_scores :
-            self.add_score(Score(name="B", score = score_player ))
-            flag=True
-        else :
-            for score_other in self._scores :
-                if score_player > score_other.score and flag is False :
-                    self.add_score(Score(name="A", score=score_player))
-                    flag=True
-        return flag
+        return len(self._scores)<self._max_scores or score_player > self._scores[-1]
+
+    def add_score(self, score_player: Score) -> None:
+        """Add a score and sort the list."""
+        if self.is_highscore(score_player.score):
+            if len(self._scores)>=self._max_scores :
+                self._scores.pop()
+            self._scores.append(score_player)
+            self._scores.sort(reverse=True)
+
+    def save(self, scores_file : Path) -> None:
+        """Save the scores' file given."""
+        x=[{"name" : s.name, "score" : s.score} for s in self]
+        with scores_file.open("w+") as fd : #(file descriptor), create a file if it doesn't exist
+            yaml.safe_dump(x,fd )
+
+
+
+
+
+
+
+
+
 
 
 

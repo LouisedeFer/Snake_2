@@ -6,6 +6,7 @@ import re
 
 # Third party
 import pygame
+import yaml
 
 # First party
 from .exceptions import ColorError, IntRangeError
@@ -73,6 +74,8 @@ def read_args() -> argparse.Namespace:
                         help="Set the number of frames per second."
                         f" Must be between {MIN_FPS} and {MAX_FPS}.")
 
+    # Scores
+    parser.add_argument("--scores-file", default="snake_scores.yml", help="The path of the scores's file where scores are stored")
     # Parse
     args = parser.parse_args()
 
