@@ -1,9 +1,9 @@
 import typing
+from pathlib import Path
 
 import yaml
 
 from .score import Score
-from pathlib import Path
 
 
 class Scores :
@@ -23,11 +23,9 @@ class Scores :
     def load(cls,scores_file : Path, max_scores : int) -> "Scores" :
         """Load the file."""
         with scores_file.open("r") as fd : #(file descriptor)
-            g=yaml.safe_load(fd )
+            g=yaml.safe_load(fd)
             x=[Score(score=elt["score"], name=elt["name"])for elt in g]
         return cls(max_scores, x)
-
-
 
 
 
@@ -38,7 +36,7 @@ class Scores :
 
     def is_highscore(self, score_player : int) -> bool :
         """Define the case highscore."""
-        return len(self._scores)<self._max_scores or score_player > self._scores[-1]
+        return len(self._scores)<self._max_scores or score_player >= self._scores[-1].score
 
     def add_score(self, score_player: Score) -> None:
         """Add a score and sort the list."""
