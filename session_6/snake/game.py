@@ -4,6 +4,7 @@
 import importlib.resources
 import sys
 from pathlib import Path
+import logging
 
 import pygame
 
@@ -22,6 +23,7 @@ from .state import State
 SK_START_LENGTH = 3
 MAX_LENGHT=8
 MAX_SCORES=5
+logger = logging.getLogger("foo")
 
 class Game:
     """The main class of the game."""
@@ -62,7 +64,7 @@ class Game:
                 )
         self._board.add_object(self._snake)
         self._board.attach_obs(self._snake)
-
+        logger.info("The snake has been reseted.")
 
     def _init(self) -> None:
         """Initialize the game."""
@@ -126,7 +128,6 @@ class Game:
         """Switch to the state Play if needed."""
         if event.type==pygame.KEYDOWN and event.key==pygame.K_SPACE:
             self._state=State.PLAY
-
 
     def _process_play_event(self, event : pygame.event.Event) -> None:
         """Change the direction of the snake if needed."""
@@ -219,6 +220,7 @@ class Game:
                         self._reset_snake()
                         if self._scores.is_highscore(score) is True :
                             self._new_high_score=Score(name="", score=score)
+                            logger.info("A new highscore has been made !")
                             self._scores.add_score(self._new_high_score)
                             self._state= State.INPUT_NAME
                         else :

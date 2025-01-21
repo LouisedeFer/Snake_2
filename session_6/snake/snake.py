@@ -8,7 +8,6 @@ import typing
 # Third party
 import pygame
 import logging
-import colorlog
 
 # First party
 from .dir import Dir
@@ -16,12 +15,12 @@ from .exceptions import GameOver
 from .fruit import Fruit
 from .game_object import GameObject
 from .tile import Tile
-from .cmd_line import read_args
+'''from .cmd_line import read_args'''
 
 # Logging messages configuration
-args = read_args()
-logger = logging.getLogger("foo")
-color_fmt = colorlog.ColoredFormatter(
+'''args = read_args()'''
+'''logger = logging.getLogger("foo")'''
+'''color_fmt = colorlog.ColoredFormatter(
     "%(log_color)s[%(asctime)s][%(levelname)s] %(message)s",
     log_colors={
         "DEBUG": "yellow",
@@ -37,12 +36,7 @@ logger.addHandler(color_handler)
 if args.verbose == 1:
     logger.setLevel(logging.INFO)
 elif args.verbose == 2:
-    logger.setLevel(logging.DEBUG)
-elif args.verbose > 2:
-    logger.setLevel(logging.TRACE)
-
-
-args = read_args()
+    logger.setLevel(logging.DEBUG)''' # useless here
 
 # Constants
 DEF_HEAD_COLOR = pygame.Color("green")

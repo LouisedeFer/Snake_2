@@ -2,10 +2,11 @@
 
 # Third party
 import pygame
+import logging
 
 # First party
 from .dir import Dir
-
+logger = logging.getLogger("foo")
 
 class Tile:
     """
