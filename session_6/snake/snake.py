@@ -6,6 +6,8 @@ import typing
 
 # Third party
 import pygame
+import logging
+import colorlog
 
 # First party
 from .dir import Dir
@@ -13,6 +15,31 @@ from .exceptions import GameOver
 from .fruit import Fruit
 from .game_object import GameObject
 from .tile import Tile
+from .cmd_line import read_args
+
+# Logging messages configuration
+args = read_args()
+logger = logging.getLogger("foo")
+color_fmt = colorlog.ColoredFormatter(
+    "%(log_color)s[%(asctime)s][%(levelname)s] %(message)s",
+    log_colors={
+        "DEBUG": "yellow",
+        "INFO": "green",
+        "WARNING": "purple",
+        "ERROR": "red",
+        "CRITICAL": "red",
+        })
+color_handler = colorlog.StreamHandler()
+color_handler.setFormatter(color_fmt)
+logger.addHandler(color_handler)
+
+if args.verbose == 1:
+    logger.setLevel(logging.INFO)
+elif args.verbose == 2:
+    logger.setLevel(logging.DEBUG)
+elif args.verbose > 2:
+    logger.setLevel(logging.TRACE)
+
 
 # Constants
 DEF_HEAD_COLOR = pygame.Color("green")
@@ -63,6 +90,7 @@ class Snake(GameObject):
         # Only the head has exited
         self._tiles[0].x = self._tiles[0].x % width
         self._tiles[0].y = self._tiles[0].y % height
+        logger.info("The snake has exited the board.")
 
     def notify_collision(self, obj: GameObject) -> None:
         """Notify that an object collides with another."""
@@ -74,6 +102,7 @@ class Snake(GameObject):
             # Notify that the fruit has been eaten
             for obs in self.observers:
                 obs.notify_object_eaten(obj)
+            logger.info("The snake has eaten a fruit.")
 
     def move(self) -> None:
         """Let the snake advance."""
