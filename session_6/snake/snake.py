@@ -78,6 +78,7 @@ class Snake(GameObject):
             # Notify that the fruit has been eaten
             for obs in self.observers:
                 obs.notify_object_eaten(obj)
+                logger.info("Fruit eaten")
 
     def move(self) -> None:
         """Let the snake advance."""

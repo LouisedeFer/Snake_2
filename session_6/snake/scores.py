@@ -2,8 +2,10 @@ import typing
 from pathlib import Path
 
 import yaml
-
+import logging
 from .score import Score
+
+logger = logging.getLogger("foo")
 
 
 class Scores :
@@ -45,6 +47,7 @@ class Scores :
                 self._scores.pop()
             self._scores.append(score_player)
             self._scores.sort(reverse=True)
+            logger.info("New score added.")
 
     def save(self, scores_file : Path) -> None:
         """Save the scores' file given."""

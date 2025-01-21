@@ -1,7 +1,7 @@
 # ruff: noqa: D100,S311
 
 # Standard
-import logging as logger
+import logging 
 import sys
 from pathlib import Path
 
@@ -10,6 +10,7 @@ from .cmd_line import read_args
 from .exceptions import SnakeError
 from .game import Game
 
+logger = logging.getLogger("foo")
 
 def main() -> None: # noqa: D103
 
