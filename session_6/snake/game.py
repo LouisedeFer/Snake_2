@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 import pygame
+import logging
 
 # First party
 from .board import Board
@@ -184,7 +185,7 @@ class Game:
         """Start the game."""
         # Initialize pygame
         pygame.init()
-
+        
         # Initialize game
         self._init()
 
