@@ -2,11 +2,14 @@
 
 # Standard
 import argparse
+import logging
 import re
+import sys
+
+import colorlog
 
 # Third party
 import pygame
-import yaml
 
 # First party
 from .exceptions import ColorError, IntRangeError
@@ -37,6 +40,29 @@ SK_DEF_BODY_COLOR_HEX = (f"#{SK_DEF_BODY_COLOR.r:02x}{SK_DEF_BODY_COLOR.g:02x}"
 FRUIT_DEF_COLOR = pygame.Color("Red3") # Fruit default color
 FRUIT_DEF_COLOR_HEX = (f"#{FRUIT_DEF_COLOR.r:02x}{FRUIT_DEF_COLOR.g:02x}"
                        f"{FRUIT_DEF_COLOR.b:02x}")
+
+#Log messsages
+logger = logging.getLogger("foo")
+
+
+handler = logging.StreamHandler(sys.stderr)
+logger.addHandler(handler) # Registration of the new handler
+logger.setLevel(logging.INFO)
+
+
+color_fmt = colorlog.ColoredFormatter(
+    "%(log_color)s[%(asctime)s][%(levelname)s] %(message)s",
+    log_colors={
+        "DEBUG": "yellow",
+        "INFO": "green",
+        "WARNING": "purple",
+        "ERROR": "red",
+        "CRITICAL": "red",
+        })
+
+color_handler = colorlog.StreamHandler()
+color_handler.setFormatter(color_fmt)
+logger.addHandler(color_handler)
 
 def read_args() -> argparse.Namespace:
     """Read command line arguments."""
@@ -77,11 +103,8 @@ def read_args() -> argparse.Namespace:
     # Scores
     parser.add_argument("--scores-file", default="snake_scores.yml", help="The path of the scores's file where scores are stored")
 
-    # Logger
-    log.add_argument("--verbose", "-v", dest="verbose", action="count",
-        default=0,
-        help="Verbose level. -v for information, -vv for debug,"
-                  " -vvv for trace.")
+    #Logging
+    parser.add_argument("--verbose", "-v", dest="verbose", action="count", default=0, help="Verbose level. -v for information, -vv for debug, -vvv for trace.")
     # Parse
     args = parser.parse_args()
 
@@ -104,6 +127,12 @@ def read_args() -> argparse.Namespace:
         if not re.match(r"^#[0-9a-fA-F]{6}$", color):
             raise ColorError(color)
 
+    if args.verbose == 1:
+        logger.setLevel(logging.INFO)
+    elif args.verbose == 2:
+        logger.setLevel(logging.DEBUG)
     # Run parser on command line arguments
     return args
+
+
 
