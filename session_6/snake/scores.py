@@ -26,6 +26,7 @@ class Scores :
         """Load the file."""
         with scores_file.open("r") as fd : #(file descriptor)
             g=yaml.safe_load(fd)
+            logger.info("load the file")
             x=[Score(score=elt["score"], name=elt["name"])for elt in g]
         return cls(max_scores, x)
 
