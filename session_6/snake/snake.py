@@ -1,6 +1,7 @@
 # ruff: noqa: D100,S311
 
 # Standard
+import logging
 import random
 import typing
 
@@ -18,6 +19,7 @@ from .tile import Tile
 DEF_HEAD_COLOR = pygame.Color("green")
 DEF_BODY_COLOR = pygame.Color("darkgreen")
 SK_START_LENGTH = 3
+logger = logging.getLogger("foo")
 
 class Snake(GameObject):
     """The snake."""
@@ -30,6 +32,8 @@ class Snake(GameObject):
         self._dir = direction
         self._length = len(tiles)
         self._gameover_on_exit = gameover_on_exit
+        logger.info("Initialize the snake")
+
 
     @property
     def length(self) -> int:
