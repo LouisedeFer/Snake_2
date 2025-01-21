@@ -19,6 +19,7 @@ from .tile import Tile
 DEF_HEAD_COLOR = pygame.Color("green")
 DEF_BODY_COLOR = pygame.Color("darkgreen")
 SK_START_LENGTH = 3
+
 logger = logging.getLogger("foo")
 
 class Snake(GameObject):
@@ -58,6 +59,8 @@ class Snake(GameObject):
     @dir.setter
     def dir(self, direction: Dir) -> None:
         self._dir = direction
+        logger.debug("Change the direction of the snake")
+
 
     def notify_out_of_board(self, width: int, height: int) -> None:
         """Snake has exited the board."""

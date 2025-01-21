@@ -1,12 +1,14 @@
 # ruff: noqa: D100,S311
 
 # Third party
+import logging
+
 import pygame
 
 # First party
 from .dir import Dir
 
-
+logger = logging.getLogger("foo")
 class Tile:
     """
     A square tile in the game.
@@ -66,6 +68,7 @@ class Tile:
             return Tile(x = self.x + other.x, y = self.y + other.y,
                         color = self.color)
         msg = f"Wrong object type {type(object)}."
+        logger.error("Wrong object type")
         raise ValueError(msg)
 
     def __sub__(self, other: object) -> "Tile":
@@ -74,6 +77,7 @@ class Tile:
             return Tile(x = self.x - other.x, y = self.y - other.y,
                         color = self.color)
         msg = f"Wrong object type {type(object)}."
+        logger.error("Wrong object type")
         raise ValueError(msg)
 
     def draw(self, screen: pygame.Surface, size: int) -> None:
