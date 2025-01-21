@@ -42,6 +42,8 @@ elif args.verbose > 2:
     logger.setLevel(logging.TRACE)
 
 
+args = read_args()
+
 # Constants
 DEF_HEAD_COLOR = pygame.Color("green")
 DEF_BODY_COLOR = pygame.Color("darkgreen")
