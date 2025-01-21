@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 import pygame
+import logging
 
 # First party
 from .board import Board
@@ -22,6 +23,8 @@ from .state import State
 SK_START_LENGTH = 3
 MAX_LENGHT=8
 MAX_SCORES=5
+logger = logging.getLogger("foo")
+
 
 class Game:
     """The main class of the game."""
@@ -62,6 +65,7 @@ class Game:
                 )
         self._board.add_object(self._snake)
         self._board.attach_obs(self._snake)
+        logger.info("Snake has been (re)created.")
 
 
     def _init(self) -> None:
@@ -111,6 +115,7 @@ class Game:
         text_gameover = self._font_2.render("GAME OVER", True, pygame.Color("red"))
         x, y = 80, 160 # Define the position where to write text.
         self._screen.blit(text_gameover, (x, y))
+        logger.info("Drawing Gameover sentence")
 
     def _draw_scores(self) -> None :
         """Put a highscore's line."""
@@ -183,7 +188,7 @@ class Game:
         """Start the game."""
         # Initialize pygame
         pygame.init()
-
+        logger.info("starting game")
         # Initialize game
         self._init()
 
@@ -232,5 +237,6 @@ class Game:
 
 
         # Terminate pygame
+        logger.info("Game ended. Exiting...")
         pygame.quit()
 

@@ -26,7 +26,6 @@ class Score :
         """Return the score."""
         return self._score
 
-    
     # Implemente the comparaison operators to use the function sort in the lists
     def __lt__(self, other : object) -> bool :
         """Define the comparaison operator."""
