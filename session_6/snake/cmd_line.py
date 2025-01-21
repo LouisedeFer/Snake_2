@@ -76,6 +76,12 @@ def read_args() -> argparse.Namespace:
 
     # Scores
     parser.add_argument("--scores-file", default="snake_scores.yml", help="The path of the scores's file where scores are stored")
+
+    # Logger
+    log.add_argument("--verbose", "-v", dest="verbose", action="count",
+        default=0,
+        help="Verbose level. -v for information, -vv for debug,"
+                  " -vvv for trace.")
     # Parse
     args = parser.parse_args()
 

@@ -62,6 +62,7 @@ class Game:
                 )
         self._board.add_object(self._snake)
         self._board.attach_obs(self._snake)
+        self._logger.info("Snake has been (re)created.")
 
 
     def _init(self) -> None:

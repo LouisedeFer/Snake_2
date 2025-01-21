@@ -1,6 +1,7 @@
 # ruff: noqa: D100,S311
 
 # Standard
+import logging as logger
 import sys
 from pathlib import Path
 
@@ -17,6 +18,7 @@ def main() -> None: # noqa: D103
         args = read_args()
 
         # Start game
+        logger.info("Starting the Snake game...")
         Game(width = args.width, height = args.height,
              tile_size = args.tile_size, fps = args.fps,
              fruit_color = args.fruit_color,
@@ -26,5 +28,5 @@ def main() -> None: # noqa: D103
              ).start()
 
     except SnakeError as e:
-        print(f"Error: {e}") # noqa: T201
+        logger.exception(f"Error: {e}") # noqa: T201
         sys.exit(1)
