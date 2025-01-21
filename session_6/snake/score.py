@@ -28,30 +28,33 @@ class Score :
 
     
     # Implemente the comparaison operators to use the function sort in the lists
-    def __gt__(self, other : object) -> bool :
-        """Define the comparaison operator."""
-        return isinstance(other, Score) and self._score > other._score
-
     def __lt__(self, other : object) -> bool :
         """Define the comparaison operator."""
         return isinstance(other, Score) and self._score < other._score
+    """
+    def __gt__(self, other : object) -> bool :
+        Define the comparaison operator.
+        return isinstance(other, Score) and self._score > other._score
+
 
     def __eq__(self, other : object) -> bool :
-        """Define the comparaison operator."""
+        Define the comparaison operator.
         return isinstance(other, Score) and self._score == other._score
 
     def __ge__(self, other : object) -> bool :
-        """Define the comparaison operator."""
+        Define the comparaison operator.
         return isinstance(other, Score) and self._score >= other._score
 
     def __le__(self, other : object) -> bool :
-        """Define the comparaison operator."""
+        Define the comparaison operator.
         return isinstance(other, Score) and self._score <= other._score
 
     def __ne__(self, other : object) -> bool :
-        """Define the comparaison operator."""
+        Define the comparaison operator.
         return isinstance(other, Score) and self._score != other._score
 
     def __repr__(self) -> str:
-        """Representation."""
+        Representation.
         return f"Score(name={self._name}, score={self._score})"
+
+"""
